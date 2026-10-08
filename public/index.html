@@ -14,7 +14,7 @@
 h1{font-size:34px;line-height:1.05;margin:30px 0 10px;font-weight:900;text-transform:uppercase}h1 em{color:var(--yel);font-style:normal;text-transform:none}
 p.sub{color:var(--mut);margin:0 0 22px;font-weight:500}
 label{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin:18px 0 6px}
-input[type=text],input[type=tel],select{width:100%;padding:15px;border-radius:12px;border:0;background:#fff;color:#1c2b3d;font:600 16px Montserrat,system-ui,sans-serif}
+input[type=text],input[type=tel],input[type=email],select{width:100%;padding:15px;border-radius:12px;border:0;background:#fff;color:#1c2b3d;font:600 16px Montserrat,system-ui,sans-serif}
 input:focus,select:focus{outline:3px solid var(--yel);outline-offset:1px}
 .hint{font-size:12px;color:var(--mut);margin-top:6px}
 .chk{display:flex;gap:12px;align-items:flex-start;margin-top:22px;font-size:12px;color:var(--mut);line-height:1.45}
@@ -30,37 +30,58 @@ footer{margin-top:30px;font-size:11px;color:var(--mut);text-align:center}
 <h1>Decide ser <em>más</em></h1>
 <p class="sub">Regístrate y descubre tu futuro universitario.</p>
 <form id="f" novalidate>
-<label for="n">Nombre y apellido</label>
-<input id="n" type="text" autocomplete="name" maxlength="80" placeholder="Nombre y apellido">
-<label for="t">Teléfono celular</label>
+<label for="n">Nombres y apellidos</label>
+<input id="n" type="text" autocomplete="name" maxlength="80" placeholder="Nombres y apellidos">
+<label for="d">Número de cédula</label>
+<input id="d" type="text" inputmode="numeric" maxlength="10" placeholder="10 dígitos">
+<label for="e">Correo electrónico</label>
+<input id="e" type="email" autocomplete="email" maxlength="100" placeholder="correo@ejemplo.com">
+<label for="t">Número telefónico</label>
 <input id="t" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" placeholder="09XXXXXXXX">
 <div class="hint">Número ecuatoriano de 10 dígitos que empieza con 09.</div>
-<label for="c">Carrera de interés</label>
-<select id="c"><option value="">Selecciona tu carrera</option></select>
-<label class="chk"><input id="a" type="checkbox"><span>Autorizo el tratamiento de mis datos para que la UTPL pueda contactarme sobre mi interés académico.</span></label>
+<label for="m">Modalidad de interés</label>
+<select id="m"><option value="">Selecciona la modalidad</option></select>
+<label for="c" id="cl">Carrera o programa de interés</label>
+<select id="c" disabled><option value="">Primero elige la modalidad</option></select>
+<input id="cx" type="text" maxlength="100" placeholder="Escribe el programa de tu interés" hidden>
+<label class="chk"><input id="a" type="checkbox"><span>Autorizo el tratamiento de mis datos personales para que la UTPL pueda contactarme sobre mi interés académico.</span></label>
 <button id="b" type="submit">REGISTRARME</button>
-<div id="m" class="msg" role="alert"></div>
+<div id="msg" class="msg" role="alert"></div>
 </form></div>
 <div id="done" class="ok" hidden><div class="big">✓</div><h2>¡Registro exitoso!</h2><p class="sub">Pronto te contactarán.</p></div>
 <footer>Responsable del tratamiento de datos: Universidad Técnica Particular de Loja (UTPL).</footer>
 </div>
 <script>
 const $=id=>document.getElementById(id);
-fetch('/api/carreras').then(r=>r.json()).then(l=>l.forEach(x=>{const o=document.createElement('option');o.value=o.textContent=x;$('c').appendChild(o)}));
-$('t').addEventListener('input',e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,10));
+let CAT={},LIB=[];
+fetch('/api/catalogo').then(r=>r.json()).then(j=>{CAT=j.catalogo;LIB=j.libres;Object.keys(CAT).forEach(k=>{const o=document.createElement('option');o.value=o.textContent=k;$('m').appendChild(o)})});
+$('m').addEventListener('change',()=>{
+  const m=$('m').value,sel=$('c'),cx=$('cx');
+  sel.replaceChildren();const base=document.createElement('option');base.value='';
+  if(!m){base.textContent='Primero elige la modalidad';sel.append(base);sel.disabled=true;sel.hidden=false;cx.hidden=true;return}
+  if(LIB.includes(m)){sel.hidden=true;cx.hidden=false;cx.value='';return}
+  cx.hidden=true;sel.hidden=false;sel.disabled=false;base.textContent='Selecciona tu carrera o programa';sel.append(base);
+  CAT[m].forEach(x=>{const o=document.createElement('option');o.value=o.textContent=x;sel.append(o)});
+});
+['d','t'].forEach(id=>$(id).addEventListener('input',e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,10)));
 $('f').addEventListener('submit',async e=>{
-  e.preventDefault();const m=$('m');m.textContent='';
-  const nombre=$('n').value.trim().replace(/\s+/g,' '),telefono=$('t').value,carrera=$('c').value,autorizacion=$('a').checked;
-  if(nombre.length<3||!nombre.includes(' '))return m.textContent='Ingresa nombre y apellido.';
-  if(!/^09\d{8}$/.test(telefono))return m.textContent='El teléfono debe tener 10 dígitos y empezar con 09.';
-  if(!carrera)return m.textContent='Selecciona una carrera.';
-  if(!autorizacion)return m.textContent='Debes autorizar el tratamiento de tus datos.';
+  e.preventDefault();const out=$('msg');out.textContent='';
+  const modalidad=$('m').value;
+  const body={nombre:$('n').value.trim().replace(/\s+/g,' '),cedula:$('d').value,correo:$('e').value.trim(),telefono:$('t').value,modalidad,
+    carrera:LIB.includes(modalidad)?$('cx').value.trim():$('c').value,autorizacion:$('a').checked};
+  if(body.nombre.length<3||!body.nombre.includes(' '))return out.textContent='Ingresa nombres y apellidos.';
+  if(!/^\d{10}$/.test(body.cedula))return out.textContent='La cédula debe tener 10 dígitos.';
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.correo))return out.textContent='Ingresa un correo electrónico válido.';
+  if(!/^09\d{8}$/.test(body.telefono))return out.textContent='El teléfono debe tener 10 dígitos y empezar con 09.';
+  if(!modalidad)return out.textContent='Selecciona la modalidad.';
+  if(!body.carrera)return out.textContent='Selecciona o escribe la carrera o programa.';
+  if(!body.autorizacion)return out.textContent='Debes autorizar el tratamiento de tus datos.';
   $('b').disabled=true;
   try{
-    const r=await fetch('/api/registro',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre,telefono,carrera,autorizacion})});
+    const r=await fetch('/api/registro',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const j=await r.json();
     if(!r.ok)throw new Error(j.error||'Error al registrar.');
     $('form').hidden=true;$('done').hidden=false;
-  }catch(err){m.textContent=err.message;$('b').disabled=false}
+  }catch(err){out.textContent=err.message;$('b').disabled=false}
 });
 </script></body></html>

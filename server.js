@@ -9,14 +9,18 @@ const ADMIN_KEY = process.env.ADMIN_KEY || 'cambia-esta-clave';
 const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'registros.json');
 const PUBLIC = path.join(__dirname, 'public');
 
-const CARRERAS = [
-  'Administración de Empresas','Contabilidad y Auditoría','Economía','Mercadotecnia',
-  'Derecho','Psicología','Educación','Comunicación',
-  'Arquitectura','Ingeniería Civil','Ingeniería en Sistemas','Ingeniería Industrial',
-  'Ingeniería Electrónica','Medicina','Enfermería','Odontología',
-  'Nutrición y Dietética','Biología','Química','Gastronomía',
-  'Turismo y Hotelería','Diseño Gráfico','Artes Visuales'
-];
+const CATALOGO = JSON.parse(fs.readFileSync(path.join(__dirname, 'catalogo.json'), 'utf8'));
+const LIBRES = ['Posgrado', 'Formación permanente']; // sin listado: el programa se escribe a mano
+
+function cedulaValida(c) {
+  if (!/^\d{10}$/.test(c)) return false;
+  const prov = +c.slice(0, 2);
+  if (!((prov >= 1 && prov <= 24) || prov === 30)) return false;
+  if (+c[2] > 5) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) { let v = +c[i] * (i % 2 === 0 ? 2 : 1); if (v > 9) v -= 9; sum += v; }
+  return ((10 - (sum % 10)) % 10) === +c[9];
+}
 
 let registros = [];
 try { registros = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); } catch (_) {}
@@ -39,12 +43,12 @@ const authed = (req, url) => {
   const a = Buffer.from(k), b = Buffer.from(ADMIN_KEY);
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 };
-const csvCell = v => { let s = String(v); if (/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+const csvCell = v => { let s = String(v); if (/^\d{10}$/.test(s)) return '="' + s + '"'; if (/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
 
 http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x');
 
-  if (req.method === 'GET' && url.pathname === '/api/carreras') return send(res, 200, CARRERAS);
+  if (req.method === 'GET' && url.pathname === '/api/catalogo') return send(res, 200, { catalogo: CATALOGO, libres: LIBRES });
 
   if (req.method === 'POST' && url.pathname === '/api/registro') {
     const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
@@ -54,14 +58,21 @@ http.createServer((req, res) => {
     req.on('end', () => {
       let d; try { d = JSON.parse(raw); } catch { return send(res, 400, { error: 'Solicitud inválida.' }); }
       const nombre = String(d.nombre || '').trim().replace(/\s+/g, ' ');
+      const cedula = String(d.cedula || '').trim();
+      const correo = String(d.correo || '').trim().toLowerCase();
       const telefono = String(d.telefono || '').trim();
-      const carrera = String(d.carrera || '');
-      if (nombre.length < 3 || nombre.length > 80 || !nombre.includes(' ')) return send(res, 400, { error: 'Ingresa nombre y apellido.' });
+      const modalidad = String(d.modalidad || '');
+      const carrera = String(d.carrera || '').trim().replace(/\s+/g, ' ');
+      if (nombre.length < 3 || nombre.length > 80 || !nombre.includes(' ')) return send(res, 400, { error: 'Ingresa nombres y apellidos.' });
+      if (!cedulaValida(cedula)) return send(res, 400, { error: 'El número de cédula no es válido.' });
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo) || correo.length > 100) return send(res, 400, { error: 'Ingresa un correo electrónico válido.' });
       if (!/^09\d{8}$/.test(telefono)) return send(res, 400, { error: 'El teléfono debe tener 10 dígitos y empezar con 09.' });
-      if (!CARRERAS.includes(carrera)) return send(res, 400, { error: 'Selecciona una carrera.' });
+      if (!Object.prototype.hasOwnProperty.call(CATALOGO, modalidad)) return send(res, 400, { error: 'Selecciona una modalidad.' });
+      if (LIBRES.includes(modalidad)) { if (carrera.length < 3 || carrera.length > 100) return send(res, 400, { error: 'Escribe el programa de tu interés.' }); }
+      else if (!CATALOGO[modalidad].includes(carrera)) return send(res, 400, { error: 'Selecciona una carrera o programa.' });
       if (d.autorizacion !== true) return send(res, 400, { error: 'Debes autorizar el tratamiento de tus datos.' });
-      if (registros.some(r => r.telefono === telefono)) return send(res, 409, { error: 'Este teléfono ya está registrado.' });
-      registros.push({ id: registros.length + 1, fecha: new Date().toISOString(), nombre, telefono, carrera, autorizacion: true });
+      if (registros.some(r => r.cedula === cedula)) return send(res, 409, { error: 'Esta cédula ya está registrada.' });
+      registros.push({ id: registros.length + 1, fecha: new Date().toISOString(), nombre, cedula, correo, telefono, modalidad, carrera, autorizacion: true });
       save();
       send(res, 201, { ok: true });
     });
@@ -74,8 +85,8 @@ http.createServer((req, res) => {
   }
   if (url.pathname === '/api/informe.csv') {
     if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
-    const rows = [['id','fecha_ec','nombre','telefono','carrera','autorizacion']].concat(
-      registros.map(r => [r.id, new Date(r.fecha).toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }), r.nombre, r.telefono, r.carrera, 'sí']));
+    const rows = [['id','fecha_ec','nombre','cedula','correo','telefono','modalidad','carrera','autorizacion']].concat(
+      registros.map(r => [r.id, new Date(r.fecha).toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }), r.nombre, r.cedula, r.correo, r.telefono, r.modalidad, r.carrera, 'sí']));
     res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="registros.csv"' });
     return res.end('﻿' + rows.map(r => r.map(csvCell).join(',')).join('\n'));
   }

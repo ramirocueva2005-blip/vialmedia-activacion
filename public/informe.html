@@ -16,20 +16,21 @@ h2{font-size:15px;margin:0 0 12px}
 .row{display:grid;grid-template-columns:200px 1fr 40px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
 .bar{background:#e9ecef;border-radius:4px;height:14px}.bar i{display:block;height:100%;background:var(--ac);border-radius:4px}
 .row em{font-style:normal;text-align:right;font-weight:700}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef}th{font-size:11px;text-transform:uppercase;color:#667}
+section:last-of-type{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef}th{font-size:11px;text-transform:uppercase;color:#667}
 #gate{max-width:360px;margin:20vh auto;text-align:center}#gate input{width:100%;padding:12px;font-size:16px;border:1px solid #ccd;border-radius:8px;margin:12px 0}
 .err{color:#c00;font-size:13px}
 @media(max-width:600px){.row{grid-template-columns:120px 1fr 32px}}
-@media print{body{background:#fff}.btns,#gate{display:none}section,.k{break-inside:avoid;border-color:#ccc}}
+@media print{@page{size:landscape}body{background:#fff}.btns,#gate{display:none}section,.k{break-inside:avoid;border-color:#ccc}}
 </style></head><body>
 <div id="gate"><h1>Informe</h1><input id="key" type="password" placeholder="Clave de acceso"><button onclick="load()">Entrar</button><div id="e" class="err"></div></div>
 <div class="wrap" id="app" hidden>
 <header><div><h1>Informe de activación UTPL</h1><div class="meta" id="meta"></div></div>
 <div class="btns"><a class="btn" id="csv">CSV</a><button onclick="print()">Descargar PDF</button></div></header>
 <div class="kpis" id="kpis"></div>
-<section><h2>Registros por carrera</h2><div id="bars"></div></section>
+<section><h2>Registros por modalidad</h2><div id="mods"></div></section>
+<section><h2>Registros por carrera o programa</h2><div id="bars"></div></section>
 <section><h2>Registros por hora (hora Ecuador)</h2><div id="hours"></div></section>
-<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Carrera</th></tr></thead><tbody id="tb"></tbody></table></section>
+<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
 </div>
 <script>
 const $=id=>document.getElementById(id);
@@ -45,12 +46,12 @@ async function load(){
   $('gate').hidden=true;$('app').hidden=false;
   $('csv').href='/api/informe.csv?key='+encodeURIComponent(key);
   $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz)+'';
-  const byC={},byH={};
-  d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;const h=new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';byH[h]=(byH[h]||0)+1});
+  const byC={},byH={},byM={};
+  d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;byM[x.modalidad]=(byM[x.modalidad]||0)+1;const h=new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';byH[h]=(byH[h]||0)+1});
   const sc=Object.entries(byC).sort((a,b)=>b[1]-a[1]);
-  $('kpis').replaceChildren(...[['Total registros',d.length],['Carreras con registros',sc.length],['Carrera líder',sc[0]?sc[0][0]+' ('+sc[0][1]+')':'—'],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
-  bars($('bars'),sc);bars($('hours'),Object.entries(byH).sort());
-  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',tz),x.nombre,x.telefono,x.carrera].forEach(v=>tr.append(el('td',v)));return tr}));
+  $('kpis').replaceChildren(...[['Total registros',d.length],['Carreras / programas',sc.length],['Carrera líder',sc[0]?sc[0][0]+' ('+sc[0][1]+')':'—'],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
+  bars($('mods'),Object.entries(byM).sort((a,b)=>b[1]-a[1]));bars($('bars'),sc);bars($('hours'),Object.entries(byH).sort());
+  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',tz),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera].forEach(v=>tr.append(el('td',v)));return tr}));
 }
 $('key').addEventListener('keydown',e=>e.key==='Enter'&&load());
 </script></body></html>
