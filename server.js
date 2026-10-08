@@ -10,7 +10,7 @@ const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'registros.json'
 const PUBLIC = path.join(__dirname, 'public');
 
 const CATALOGO = JSON.parse(fs.readFileSync(path.join(__dirname, 'catalogo.json'), 'utf8'));
-const LIBRES = ['Posgrado', 'Formación permanente']; // sin listado: el programa se escribe a mano
+const LIBRES = ['Formación permanente']; // sin listado: el programa se escribe a mano
 
 function cedulaValida(c) {
   if (!/^\d{10}$/.test(c)) return false;
