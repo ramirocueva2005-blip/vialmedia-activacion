@@ -11,7 +11,7 @@ h1{margin:0;font-size:24px}.meta{color:#667;font-size:13px}
 .btns{display:flex;gap:8px;flex-wrap:wrap}button,a.btn{padding:10px 16px;border-radius:8px;border:0;background:#1c4069;color:#fff;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer}
 button.alt{background:#fff;color:#1c4069;border:1px solid #1c4069}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
-.k{background:#fff;border-radius:12px;padding:16px;border:1px solid #e3e6ea}.k b{display:block;font-size:28px}.k span{font-size:12px;color:#667;text-transform:uppercase;letter-spacing:.06em}
+.k{background:#fff;border-radius:12px;padding:16px;border:1px solid #e3e6ea}.k b{display:block;font-size:22px;line-height:1.2}.k:first-child b{font-size:34px}.k span{font-size:12px;color:#667;text-transform:uppercase;letter-spacing:.06em}
 section{background:#fff;border:1px solid #e3e6ea;border-radius:12px;padding:16px;margin-bottom:16px;overflow-x:auto}
 h2{font-size:15px;margin:0 0 12px}
 .row{display:grid;grid-template-columns:200px 1fr 70px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
@@ -47,9 +47,10 @@ td.n,th.n{text-align:right}
 <div class="btns"><a class="btn" id="csv">CSV</a><button onclick="print()">Descargar PDF</button></div></header>
 <div class="kpis" id="kpis"></div>
 
-<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Activadora</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
 <section><h2>Registros por modalidad</h2><div id="mods"></div></section>
 <section><h2>Registros por carrera o programa</h2><div id="bars"></div></section>
+<section><h2>Registros por hora (hora Ecuador)</h2><div id="hours"></div></section>
+<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Activadora</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
 <section><h2>Registros por activadora</h2><div id="byAct"></div></section>
 <section><h2>Registros por hora y activadora (hora Ecuador)</h2><div id="hourAct"></div></section>
 <section><h2>Modalidad de interés por activadora</h2><div id="modAct"></div></section>
@@ -108,10 +109,12 @@ async function load(keep){
   const byC={},byM={},byA={};
   d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;byM[x.modalidad]=(byM[x.modalidad]||0)+1;const n=nameOf(x.activadora);byA[n]=(byA[n]||0)+1});
   const sc=Object.entries(byC).sort((a,b)=>b[1]-a[1]),sa=Object.entries(byA).sort((a,b)=>b[1]-a[1]);
-  $('kpis').replaceChildren(...[['Total registros',d.length],['Activadora líder',sa[0]?sa[0][0]+' ('+sa[0][1]+')':'—'],['Carreras / programas',sc.length],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
+  const sm=Object.entries(byM).sort((a,b)=>b[1]-a[1]);
+  $('kpis').replaceChildren(...[['Total registros',d.length],['Carrera líder',sc[0]?sc[0][0]+' ('+sc[0][1]+')':'—'],['Carreras / programas con registros',sc.length],['Modalidad líder',sm[0]?sm[0][0]+' ('+sm[0][1]+')':'—'],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
   if(!keep||!document.querySelector('#act input'))renderAct();
   const actNames=ACTS.map(a=>a.nombre).concat(d.some(x=>!ACTS.some(a=>a.id===x.activadora))?['Sin asignar']:[]);
   bars($('byAct'),sa,d.length);
+  const byH={};d.forEach(x=>{const k=hourOf(x);byH[k]=(byH[k]||0)+1});bars($('hours'),Object.entries(byH).sort(),d.length);
   const hours=[...new Set(d.map(hourOf))].sort();
   matrix($('hourAct'),hours,actNames,(h,a)=>d.filter(x=>hourOf(x)===h&&nameOf(x.activadora)===a).length,'Hora');
   const mods=Object.keys(byM).sort();
