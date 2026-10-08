@@ -68,7 +68,7 @@ $('f').addEventListener('submit',async e=>{
   e.preventDefault();const out=$('msg');out.textContent='';
   const modalidad=$('m').value;
   const body={nombre:$('n').value.trim().replace(/\s+/g,' '),cedula:$('d').value,correo:$('e').value.trim(),telefono:$('t').value,modalidad,
-    carrera:LIB.includes(modalidad)?$('cx').value.trim():$('c').value,autorizacion:$('a').checked};
+    carrera:LIB.includes(modalidad)?$('cx').value.trim():$('c').value,autorizacion:$('a').checked,a:new URLSearchParams(location.search).get('a')||''};
   if(body.nombre.length<3||!body.nombre.includes(' '))return out.textContent='Ingresa nombres y apellidos.';
   if(!/^\d{10}$/.test(body.cedula))return out.textContent='La cédula debe tener 10 dígitos.';
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.correo))return out.textContent='Ingresa un correo electrónico válido.';

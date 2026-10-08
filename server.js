@@ -22,6 +22,14 @@ function cedulaValida(c) {
   return ((10 - (sum % 10)) % 10) === +c[9];
 }
 
+const ACT_FILE = process.env.ACT_FILE || path.join(path.dirname(DATA_FILE), 'activadoras.json');
+let activadoras = [{ id: 'a1', nombre: 'Ana' }, { id: 'a2', nombre: 'Julia' }, { id: 'a3', nombre: 'María' }, { id: 'a4', nombre: 'Daniela' }];
+try {
+  const saved = JSON.parse(fs.readFileSync(ACT_FILE, 'utf8'));
+  activadoras = activadoras.map(a => { const x = saved.find(y => y.id === a.id); return x ? { id: a.id, nombre: x.nombre } : a; });
+} catch (_) {}
+const saveAct = () => fs.writeFileSync(ACT_FILE, JSON.stringify(activadoras, null, 2));
+
 let registros = [];
 try { registros = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); } catch (_) {}
 const save = () => fs.writeFileSync(DATA_FILE, JSON.stringify(registros, null, 2));
@@ -72,7 +80,8 @@ http.createServer((req, res) => {
       else if (!CATALOGO[modalidad].includes(carrera)) return send(res, 400, { error: 'Selecciona una carrera o programa.' });
       if (d.autorizacion !== true) return send(res, 400, { error: 'Debes autorizar el tratamiento de tus datos.' });
       if (registros.some(r => r.cedula === cedula)) return send(res, 409, { error: 'Esta cédula ya está registrada.' });
-      registros.push({ id: registros.length + 1, fecha: new Date().toISOString(), nombre, cedula, correo, telefono, modalidad, carrera, autorizacion: true });
+      const act = activadoras.some(x => x.id === d.a) ? d.a : null;
+      registros.push({ id: registros.length + 1, fecha: new Date().toISOString(), nombre, cedula, correo, telefono, modalidad, carrera, activadora: act, autorizacion: true });
       save();
       send(res, 201, { ok: true });
     });
@@ -81,16 +90,37 @@ http.createServer((req, res) => {
 
   if (url.pathname === '/api/informe') {
     if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
-    return send(res, 200, registros);
+    return send(res, 200, { registros, activadoras });
+  }
+  if (req.method === 'PUT' && url.pathname === '/api/activadoras') {
+    if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
+    let raw = '';
+    req.on('data', c => { raw += c; if (raw.length > 5000) req.destroy(); });
+    req.on('end', () => {
+      let d; try { d = JSON.parse(raw); } catch { return send(res, 400, { error: 'Solicitud inválida.' }); }
+      const list = Array.isArray(d.activadoras) ? d.activadoras : [];
+      const next = activadoras.map(a => {
+        const x = list.find(y => y && y.id === a.id);
+        const n = x ? String(x.nombre || '').trim().replace(/\s+/g, ' ') : '';
+        return { id: a.id, nombre: n.length >= 1 && n.length <= 40 ? n : a.nombre };
+      });
+      activadoras = next; saveAct();
+      send(res, 200, { activadoras });
+    });
+    return;
   }
   if (url.pathname === '/api/informe.csv') {
     if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
-    const rows = [['id','fecha_ec','nombre','cedula','correo','telefono','modalidad','carrera','autorizacion']].concat(
-      registros.map(r => [r.id, new Date(r.fecha).toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }), r.nombre, r.cedula, r.correo, r.telefono, r.modalidad, r.carrera, 'sí']));
+    const rows = [['id','fecha_ec','nombre','cedula','correo','telefono','modalidad','carrera','activadora','autorizacion']].concat(
+      registros.map(r => [r.id, new Date(r.fecha).toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }), r.nombre, r.cedula, r.correo, r.telefono, r.modalidad, r.carrera, (activadoras.find(a => a.id === r.activadora) || {}).nombre || 'Sin asignar', 'sí']));
     res.writeHead(200, { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="registros.csv"' });
     return res.end('﻿' + rows.map(r => r.map(csvCell).join(',')).join('\n'));
   }
 
+  if (url.pathname === '/qrcode.js') {
+    res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=86400' });
+    return res.end(fs.readFileSync(path.join(PUBLIC, 'qrcode.js')));
+  }
   const file = url.pathname === '/' ? 'index.html' : url.pathname === '/informe' ? 'informe.html' : null;
   if (file) return send(res, 200, fs.readFileSync(path.join(PUBLIC, file), 'utf8'), 'text/html');
   send(res, 404, 'No encontrado', 'text/plain');

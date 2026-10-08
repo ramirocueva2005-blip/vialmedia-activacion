@@ -3,55 +3,122 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Informe de activación UTPL</title>
 <style>
-:root{--ac:#6a8a00}
+:root{--ac:#1c4069;--ac2:#f2c142}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#111;background:#f4f5f7}
-.wrap{max-width:900px;margin:0 auto;padding:24px 16px}
+.wrap{max-width:960px;margin:0 auto;padding:24px 16px}
 header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 h1{margin:0;font-size:24px}.meta{color:#667;font-size:13px}
-.btns{display:flex;gap:8px}button,a.btn{padding:10px 16px;border-radius:8px;border:0;background:#111;color:#fff;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer}
+.btns{display:flex;gap:8px;flex-wrap:wrap}button,a.btn{padding:10px 16px;border-radius:8px;border:0;background:#1c4069;color:#fff;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer}
+button.alt{background:#fff;color:#1c4069;border:1px solid #1c4069}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
-.k{background:#fff;border-radius:12px;padding:16px;border:1px solid #e3e6ea}.k b{display:block;font-size:30px}.k span{font-size:12px;color:#667;text-transform:uppercase;letter-spacing:.06em}
-section{background:#fff;border:1px solid #e3e6ea;border-radius:12px;padding:16px;margin-bottom:16px}
+.k{background:#fff;border-radius:12px;padding:16px;border:1px solid #e3e6ea}.k b{display:block;font-size:28px}.k span{font-size:12px;color:#667;text-transform:uppercase;letter-spacing:.06em}
+section{background:#fff;border:1px solid #e3e6ea;border-radius:12px;padding:16px;margin-bottom:16px;overflow-x:auto}
 h2{font-size:15px;margin:0 0 12px}
-.row{display:grid;grid-template-columns:200px 1fr 40px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
+.row{display:grid;grid-template-columns:200px 1fr 70px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
 .bar{background:#e9ecef;border-radius:4px;height:14px}.bar i{display:block;height:100%;background:var(--ac);border-radius:4px}
 .row em{font-style:normal;text-align:right;font-weight:700}
-section:last-of-type{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef}th{font-size:11px;text-transform:uppercase;color:#667}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef;white-space:nowrap}th{font-size:11px;text-transform:uppercase;color:#667}
+td.n,th.n{text-align:right}
 #gate{max-width:360px;margin:20vh auto;text-align:center}#gate input{width:100%;padding:12px;font-size:16px;border:1px solid #ccd;border-radius:8px;margin:12px 0}
 .err{color:#c00;font-size:13px}
-@media(max-width:600px){.row{grid-template-columns:120px 1fr 32px}}
-@media print{@page{size:landscape}body{background:#fff}.btns,#gate{display:none}section,.k{break-inside:avoid;border-color:#ccc}}
+.act{display:grid;grid-template-columns:1fr;gap:14px}
+.card{display:grid;grid-template-columns:130px 1fr;gap:14px;align-items:center;border:1px solid #e3e6ea;border-radius:10px;padding:12px}
+.card svg{width:130px;height:130px;display:block}
+.card input{width:100%;padding:9px;border:1px solid #ccd;border-radius:8px;font-size:15px;font-weight:600}
+.link{font-size:12px;color:#445;word-break:break-all;margin:8px 0}
+.mini{padding:7px 12px;font-size:12px}
+.hint{font-size:12px;color:#667;margin-top:10px}
+#qrsheet{display:none}
+@media(min-width:700px){.act{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.row{grid-template-columns:110px 1fr 60px}}
+@media print{
+  body{background:#fff}.btns,#gate,.noprint{display:none!important}section,.k{break-inside:avoid;border-color:#ccc}
+  @page{size:landscape}
+  body.printqr .wrap>*:not(#qrsheet){display:none!important}
+  body.printqr #qrsheet{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  body.printqr{ -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .qc{border:3px solid #1c4069;border-radius:16px;padding:20px;text-align:center;break-inside:avoid}
+  .qc svg{width:280px;height:280px}.qc h3{margin:10px 0 2px;font-size:28px;color:#1c4069}.qc p{margin:0;font-size:15px}
+}
 </style></head><body>
 <div id="gate"><h1>Informe</h1><input id="key" type="password" placeholder="Clave de acceso"><button onclick="load()">Entrar</button><div id="e" class="err"></div></div>
 <div class="wrap" id="app" hidden>
 <header><div><h1>Informe de activación UTPL</h1><div class="meta" id="meta"></div></div>
 <div class="btns"><a class="btn" id="csv">CSV</a><button onclick="print()">Descargar PDF</button></div></header>
 <div class="kpis" id="kpis"></div>
+
+<section class="noprint"><h2>Activadoras y links</h2>
+<div class="act" id="act"></div>
+<div class="btns" style="margin-top:14px"><button onclick="saveNames()">Guardar nombres</button><button class="alt" onclick="printQR()">Imprimir los 4 QR</button><span id="saved" class="meta" style="align-self:center"></span></div>
+<div class="hint">Puedes cambiar los nombres cuando quieras: los links y los QR no cambian, por lo que los ya impresos siguen funcionando. Si cambias un nombre durante el evento, el informe mostrará el nombre nuevo también para los registros anteriores de esa activadora.</div></section>
+
+<section><h2>Registros por activadora</h2><div id="byAct"></div></section>
+<section><h2>Registros por hora y activadora (hora Ecuador)</h2><div id="hourAct"></div></section>
+<section><h2>Modalidad de interés por activadora</h2><div id="modAct"></div></section>
 <section><h2>Registros por modalidad</h2><div id="mods"></div></section>
 <section><h2>Registros por carrera o programa</h2><div id="bars"></div></section>
-<section><h2>Registros por hora (hora Ecuador)</h2><div id="hours"></div></section>
-<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
+<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Activadora</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
+<div id="qrsheet"></div>
 </div>
+<script src="/qrcode.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const tz={timeZone:'America/Guayaquil'};
+let KEY='',ACTS=[];
 function el(t,txt,cls){const e=document.createElement(t);if(txt!==undefined)e.textContent=txt;if(cls)e.className=cls;return e}
-function bars(box,entries){box.replaceChildren();const mx=Math.max(1,...entries.map(e=>e[1]));
-  entries.forEach(([k,v])=>{const r=el('div',undefined,'row');r.append(el('span',k));const b=el('div',undefined,'bar'),i=el('i');i.style.width=(v/mx*100)+'%';b.append(i);r.append(b,el('em',v));box.append(r)})}
-async function load(){
-  const key=$('key').value;
+function bars(box,entries,total){box.replaceChildren();if(!entries.length){box.append(el('div','Sin registros todavía.','meta'));return}
+  const mx=Math.max(1,...entries.map(e=>e[1]));
+  entries.forEach(([k,v])=>{const r=el('div',undefined,'row');r.append(el('span',k));const b=el('div',undefined,'bar'),i=el('i');i.style.width=(v/mx*100)+'%';b.append(i);r.append(b,el('em',total?v+' · '+Math.round(v/total*100)+'%':v));box.append(r)})}
+function matrix(box,rowKeys,colKeys,get,rowLabel){box.replaceChildren();
+  if(!rowKeys.length){box.append(el('div','Sin registros todavía.','meta'));return}
+  const t=el('table'),hd=el('tr');hd.append(el('th',rowLabel));colKeys.forEach(c=>hd.append(el('th',c,'n')));hd.append(el('th','Total','n'));t.append(hd);
+  rowKeys.forEach(r=>{const tr=el('tr');tr.append(el('td',r));let s=0;colKeys.forEach(c=>{const v=get(r,c);s+=v;tr.append(el('td',v||'',' n'.trim()))});tr.append(el('td',s,'n'));t.append(tr)});box.append(t)}
+function qrFor(url){const q=qrcode(0,'M');q.addData(url);q.make();return q}
+function qrSvg(url){return qrFor(url).createSvgTag({cellSize:4,margin:2,scalable:true})}
+function qrPng(url,name){const q=qrFor(url),n=q.getModuleCount(),m=2,s=12,size=(n+2*m)*s,c=document.createElement('canvas');c.width=c.height=size;
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,size,size);x.fillStyle='#000';
+  for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect((k+m)*s,(r+m)*s,s,s);
+  c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='QR-'+name.replace(/[^\w-]+/g,'_')+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)})}
+const linkOf=a=>location.origin+'/?a='+encodeURIComponent(a.id);
+function renderAct(){const box=$('act');box.replaceChildren();
+  ACTS.forEach(a=>{const card=el('div',undefined,'card'),qb=el('div');qb.innerHTML=qrSvg(linkOf(a));
+    const side=el('div'),inp=el('input');inp.value=a.nombre;inp.maxLength=40;inp.dataset.id=a.id;inp.setAttribute('aria-label','Nombre de la activadora');
+    const lk=el('div',linkOf(a),'link'),row=el('div',undefined,'btns');
+    const cp=el('button','Copiar link','mini alt');cp.onclick=async()=>{try{await navigator.clipboard.writeText(linkOf(a));cp.textContent='Copiado ✓'}catch{cp.textContent='Selecciona y copia'};setTimeout(()=>cp.textContent='Copiar link',1500)};
+    const dl=el('button','Descargar QR','mini');dl.onclick=()=>qrPng(linkOf(a),inp.value||a.id);
+    row.append(cp,dl);side.append(inp,lk,row);card.append(qb,side);box.append(card)})}
+async function saveNames(){
+  const list=[...document.querySelectorAll('#act input')].map(i=>({id:i.dataset.id,nombre:i.value.trim()}));
+  if(list.some(x=>!x.nombre)){$('saved').textContent='Ningún nombre puede quedar vacío.';return}
+  const r=await fetch('/api/activadoras',{method:'PUT',headers:{'Content-Type':'application/json','x-admin-key':KEY},body:JSON.stringify({activadoras:list})});
+  if(!r.ok){$('saved').textContent='No se pudo guardar.';return}
+  $('saved').textContent='Guardado ✓';load(true)}
+function printQR(){const s=$('qrsheet');s.replaceChildren();
+  ACTS.forEach(a=>{const c=el('div',undefined,'qc'),q=el('div');q.innerHTML=qrSvg(linkOf(a));c.append(q,el('h3',a.nombre),el('p','Escanea para registrarte'));s.append(c)});
+  document.body.classList.add('printqr');window.onafterprint=()=>document.body.classList.remove('printqr');print()}
+async function load(keep){
+  const key=keep?KEY:$('key').value;
   const r=await fetch('/api/informe',{headers:{'x-admin-key':key}});
   if(!r.ok){$('e').textContent='Clave incorrecta.';return}
-  const d=await r.json();
+  KEY=key;const j=await r.json(),d=j.registros;ACTS=j.activadoras;
   $('gate').hidden=true;$('app').hidden=false;
   $('csv').href='/api/informe.csv?key='+encodeURIComponent(key);
-  $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz)+'';
-  const byC={},byH={},byM={};
-  d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;byM[x.modalidad]=(byM[x.modalidad]||0)+1;const h=new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';byH[h]=(byH[h]||0)+1});
-  const sc=Object.entries(byC).sort((a,b)=>b[1]-a[1]);
-  $('kpis').replaceChildren(...[['Total registros',d.length],['Carreras / programas',sc.length],['Carrera líder',sc[0]?sc[0][0]+' ('+sc[0][1]+')':'—'],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
-  bars($('mods'),Object.entries(byM).sort((a,b)=>b[1]-a[1]));bars($('bars'),sc);bars($('hours'),Object.entries(byH).sort());
-  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',tz),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera].forEach(v=>tr.append(el('td',v)));return tr}));
+  $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz);
+  const nameOf=id=>(ACTS.find(a=>a.id===id)||{}).nombre||'Sin asignar';
+  const hourOf=x=>new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';
+  const byC={},byM={},byA={};
+  d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;byM[x.modalidad]=(byM[x.modalidad]||0)+1;const n=nameOf(x.activadora);byA[n]=(byA[n]||0)+1});
+  const sc=Object.entries(byC).sort((a,b)=>b[1]-a[1]),sa=Object.entries(byA).sort((a,b)=>b[1]-a[1]);
+  $('kpis').replaceChildren(...[['Total registros',d.length],['Activadora líder',sa[0]?sa[0][0]+' ('+sa[0][1]+')':'—'],['Carreras / programas',sc.length],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
+  if(!keep||!document.querySelector('#act input'))renderAct();
+  const actNames=ACTS.map(a=>a.nombre).concat(d.some(x=>!ACTS.some(a=>a.id===x.activadora))?['Sin asignar']:[]);
+  bars($('byAct'),sa,d.length);
+  const hours=[...new Set(d.map(hourOf))].sort();
+  matrix($('hourAct'),hours,actNames,(h,a)=>d.filter(x=>hourOf(x)===h&&nameOf(x.activadora)===a).length,'Hora');
+  const mods=Object.keys(byM).sort();
+  matrix($('modAct'),actNames.filter(a=>byA[a]),mods,(a,m)=>d.filter(x=>nameOf(x.activadora)===a&&x.modalidad===m).length,'Activadora');
+  bars($('mods'),Object.entries(byM).sort((a,b)=>b[1]-a[1]),d.length);bars($('bars'),sc);
+  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',tz),nameOf(x.activadora),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera].forEach(v=>tr.append(el('td',v)));return tr}));
 }
 $('key').addEventListener('keydown',e=>e.key==='Enter'&&load());
 </script></body></html>
