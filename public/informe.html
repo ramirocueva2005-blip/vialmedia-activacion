@@ -47,17 +47,16 @@ td.n,th.n{text-align:right}
 <div class="btns"><a class="btn" id="csv">CSV</a><button onclick="print()">Descargar PDF</button></div></header>
 <div class="kpis" id="kpis"></div>
 
+<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Activadora</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
+<section><h2>Registros por modalidad</h2><div id="mods"></div></section>
+<section><h2>Registros por carrera o programa</h2><div id="bars"></div></section>
+<section><h2>Registros por activadora</h2><div id="byAct"></div></section>
+<section><h2>Registros por hora y activadora (hora Ecuador)</h2><div id="hourAct"></div></section>
+<section><h2>Modalidad de interés por activadora</h2><div id="modAct"></div></section>
 <section class="noprint"><h2>Activadoras y links</h2>
 <div class="act" id="act"></div>
 <div class="btns" style="margin-top:14px"><button onclick="saveNames()">Guardar nombres</button><button class="alt" onclick="printQR()">Imprimir los 4 QR</button><span id="saved" class="meta" style="align-self:center"></span></div>
 <div class="hint">Puedes cambiar los nombres cuando quieras: los links y los QR no cambian, por lo que los ya impresos siguen funcionando. Si cambias un nombre durante el evento, el informe mostrará el nombre nuevo también para los registros anteriores de esa activadora.</div></section>
-
-<section><h2>Registros por activadora</h2><div id="byAct"></div></section>
-<section><h2>Registros por hora y activadora (hora Ecuador)</h2><div id="hourAct"></div></section>
-<section><h2>Modalidad de interés por activadora</h2><div id="modAct"></div></section>
-<section><h2>Registros por modalidad</h2><div id="mods"></div></section>
-<section><h2>Registros por carrera o programa</h2><div id="bars"></div></section>
-<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Activadora</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
 <div id="qrsheet"></div>
 </div>
 <script src="/qrcode.js"></script>
