@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Informe de activación | Vialmedia</title>
+<title>Informe de activación UTPL</title>
 <style>
 :root{--ac:#6a8a00}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#111;background:#f4f5f7}
@@ -44,7 +44,7 @@ async function load(){
   const d=await r.json();
   $('gate').hidden=true;$('app').hidden=false;
   $('csv').href='/api/informe.csv?key='+encodeURIComponent(key);
-  $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz)+' · Vialmedia';
+  $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz)+'';
   const byC={},byH={};
   d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;const h=new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';byH[h]=(byH[h]||0)+1});
   const sc=Object.entries(byC).sort((a,b)=>b[1]-a[1]);

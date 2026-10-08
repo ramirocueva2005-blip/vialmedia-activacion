@@ -1,4 +1,4 @@
-// Vialmedia - Registro de activación (1 día). Sin dependencias externas.
+// Registro de activación UTPL (1 día). Sin dependencias externas.
 const http = require('http');
 const fs = require('fs');
 const path = require('path');

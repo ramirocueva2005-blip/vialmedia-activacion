@@ -1,31 +1,33 @@
 <!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Registro de activación | Vialmedia</title>
+<title>Decide ser más | UTPL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0e1116;--card:#171c24;--line:#2a313c;--tx:#f2f4f7;--mut:#9aa4b2;--ac:#c6f432;--err:#ff6b6b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
-.wrap{max-width:460px;margin:0 auto;padding:20px 16px calc(32px + env(safe-area-inset-bottom))}
-.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--line)}
-.brand{font-weight:800;letter-spacing:.04em;font-size:18px}.brand b{color:var(--ac)}
-.tag{border:1px solid var(--ac);color:var(--ac);padding:4px 12px;border-radius:99px;font-weight:700;font-size:13px;letter-spacing:.08em}
-h1{font-size:30px;line-height:1.1;margin:28px 0 8px}h1 em{color:var(--ac);font-style:normal}
-p.sub{color:var(--mut);margin:0 0 24px}
-label{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:18px 0 6px}
-input[type=text],input[type=tel],select{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:16px}
-input:focus,select:focus{outline:2px solid var(--ac);outline-offset:1px}
+:root{--navy:#1c4069;--navy2:#163354;--yel:#f2c142;--tx:#fff;--mut:#c4d0df;--err:#ffb4b4}
+*{box-sizing:border-box}body{margin:0;background:var(--navy);color:var(--tx);font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:460px;margin:0 auto;padding:22px 20px calc(32px + env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;border-bottom:3px solid var(--yel)}
+.logo{font-weight:900;font-size:44px;letter-spacing:-.01em;line-height:1}
+.plus{width:34px;height:34px;position:relative}.plus:before,.plus:after{content:"";position:absolute;background:var(--yel);border-radius:2px}.plus:before{left:12px;top:0;width:10px;height:34px}.plus:after{top:12px;left:0;height:10px;width:34px}
+h1{font-size:34px;line-height:1.05;margin:30px 0 10px;font-weight:900;text-transform:uppercase}h1 em{color:var(--yel);font-style:normal;text-transform:none}
+p.sub{color:var(--mut);margin:0 0 22px;font-weight:500}
+label{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin:18px 0 6px}
+input[type=text],input[type=tel],select{width:100%;padding:15px;border-radius:12px;border:0;background:#fff;color:#1c2b3d;font:600 16px Montserrat,system-ui,sans-serif}
+input:focus,select:focus{outline:3px solid var(--yel);outline-offset:1px}
 .hint{font-size:12px;color:var(--mut);margin-top:6px}
-.chk{display:flex;gap:12px;align-items:flex-start;margin-top:22px;font-size:13px;color:var(--mut);line-height:1.4}
-.chk input{width:22px;height:22px;flex:none;accent-color:var(--ac);margin-top:1px}
-button{width:100%;margin-top:24px;padding:16px;border:0;border-radius:12px;background:var(--ac);color:#0e1116;font-weight:800;font-size:16px;letter-spacing:.04em;cursor:pointer}
+.chk{display:flex;gap:12px;align-items:flex-start;margin-top:22px;font-size:12px;color:var(--mut);line-height:1.45}
+.chk input{width:22px;height:22px;flex:none;accent-color:var(--yel);margin-top:1px}
+button{width:100%;margin-top:24px;padding:17px;border:0;border-radius:12px;background:var(--yel);color:var(--navy2);font:900 16px Montserrat,sans-serif;letter-spacing:.06em;cursor:pointer}
 button:disabled{opacity:.5}
-.msg{margin-top:14px;font-size:14px;min-height:20px;color:var(--err)}
-.ok{text-align:center;padding:60px 0}.ok .big{font-size:56px;color:var(--ac)}.ok h2{margin:8px 0}
-footer{margin-top:32px;font-size:11px;color:var(--mut);text-align:center}
+.msg{margin-top:14px;font-size:14px;min-height:20px;color:var(--err);font-weight:600}
+.ok{text-align:center;padding:60px 0}.ok .big{font-size:60px;color:var(--yel);font-weight:900}.ok h2{margin:8px 0;font-weight:900;text-transform:uppercase}
+footer{margin-top:30px;font-size:11px;color:var(--mut);text-align:center}
 </style></head><body><div class="wrap">
-<div class="top"><div class="brand">VIAL<b>MEDIA</b></div><div class="tag">UTPL</div></div>
+<div class="top"><div class="logo">UTPL</div><div class="plus"></div></div>
 <div id="form">
-<h1>Decide <em>ser más</em></h1>
+<h1>Decide ser <em>más</em></h1>
 <p class="sub">Regístrate y descubre tu futuro universitario.</p>
 <form id="f" novalidate>
 <label for="n">Nombre y apellido</label>
@@ -40,7 +42,7 @@ footer{margin-top:32px;font-size:11px;color:var(--mut);text-align:center}
 <div id="m" class="msg" role="alert"></div>
 </form></div>
 <div id="done" class="ok" hidden><div class="big">✓</div><h2>¡Registro exitoso!</h2><p class="sub">Pronto te contactarán.</p></div>
-<footer>Activación operada por Vialmedia</footer>
+<footer>Responsable del tratamiento de datos: Universidad Técnica Particular de Loja (UTPL).</footer>
 </div>
 <script>
 const $=id=>document.getElementById(id);
