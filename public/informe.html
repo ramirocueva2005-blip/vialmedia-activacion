@@ -3,58 +3,83 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Informe de activación UTPL</title>
 <style>
-:root{--ac:#1c4069;--ac2:#f2c142}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#111;background:#f4f5f7}
-.wrap{max-width:960px;margin:0 auto;padding:24px 16px}
+:root{--navy:#1c4069;--ink:#14202e;--ink2:#52606f;--line:#e3e6ea;--bg:#f4f5f7;--card:#fff;
+--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c4:#eda100;--c5:#e87ba4;--cx:#8d8c87}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px}
 header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-h1{margin:0;font-size:24px}.meta{color:#667;font-size:13px}
-.btns{display:flex;gap:8px;flex-wrap:wrap}button,a.btn{padding:10px 16px;border-radius:8px;border:0;background:#1c4069;color:#fff;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer}
-button.alt{background:#fff;color:#1c4069;border:1px solid #1c4069}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0}
-.k{background:#fff;border-radius:12px;padding:16px;border:1px solid #e3e6ea}.k b{display:block;font-size:22px;line-height:1.2}.k:first-child b{font-size:34px}.k span{font-size:12px;color:#667;text-transform:uppercase;letter-spacing:.06em}
-section{background:#fff;border:1px solid #e3e6ea;border-radius:12px;padding:16px;margin-bottom:16px;overflow-x:auto}
+h1{margin:0;font-size:24px}.meta{color:var(--ink2);font-size:13px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button,a.btn{padding:10px 16px;border-radius:8px;border:0;background:var(--navy);color:#fff;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer;font-family:inherit}
+button.alt{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}
+.k{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--line)}
+.k b{display:block;font-size:22px;line-height:1.2}.k:first-child b{font-size:34px}.k span{font-size:12px;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.zone{background:var(--navy);color:#fff;border-radius:10px;padding:12px 16px;margin:30px 0 14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:14px;break-after:avoid}
+.zone small{display:block;font-weight:500;text-transform:none;letter-spacing:0;opacity:.85;margin-top:2px}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;overflow-x:auto}
 h2{font-size:15px;margin:0 0 12px}
-.row{display:grid;grid-template-columns:200px 1fr 70px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
-.bar{background:#e9ecef;border-radius:4px;height:14px}.bar i{display:block;height:100%;background:var(--ac);border-radius:4px}
+.row{display:grid;grid-template-columns:230px 1fr 78px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
+.row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{background:#e9ecef;border-radius:4px;height:14px}.bar i{display:block;height:100%;background:var(--navy);border-radius:0 4px 4px 0}
 .row em{font-style:normal;text-align:right;font-weight:700}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef;white-space:nowrap}th{font-size:11px;text-transform:uppercase;color:#667}
-td.n,th.n{text-align:right}
+.scroll{max-height:340px;overflow:auto;padding-right:6px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef;white-space:nowrap}th{font-size:11px;text-transform:uppercase;color:var(--ink2)}
 #gate{max-width:360px;margin:20vh auto;text-align:center}#gate input{width:100%;padding:12px;font-size:16px;border:1px solid #ccd;border-radius:8px;margin:12px 0}
-.err{color:#c00;font-size:13px}
+.err{color:#c00;font-size:13px}.empty{color:var(--ink2);font-size:13px}
+/* pie */
+.pie{display:grid;grid-template-columns:230px 1fr;gap:20px;align-items:center}
+.pie svg{width:230px;height:230px;display:block;overflow:visible}
+.pie path,.pie circle.s{stroke:#fff;stroke-width:2;transition:opacity .12s;cursor:pointer}
+.pie.hl path,.pie.hl circle.s{opacity:.35}.pie.hl .on{opacity:1}
+.pie text{fill:var(--ink);text-anchor:middle}
+.lg{display:grid;gap:4px}
+.lr{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;font-size:14px;cursor:default}
+.lr:hover,.lr.on{background:#eef2f7}.lr i{width:14px;height:14px;border-radius:3px;display:block}
+.lr b{font-variant-numeric:tabular-nums}.lr small{color:var(--ink2);font-weight:500;margin-left:6px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{background:#fff;color:var(--navy);border:1px solid #c5ced9;padding:8px 12px;font-size:13px}
+.tabs button[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+#tip{position:fixed;z-index:9;pointer-events:none;background:var(--ink);color:#fff;padding:7px 10px;border-radius:8px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.25);display:none;max-width:260px}
+/* activadoras */
 .act{display:grid;grid-template-columns:1fr;gap:14px}
-.card{display:grid;grid-template-columns:130px 1fr;gap:14px;align-items:center;border:1px solid #e3e6ea;border-radius:10px;padding:12px}
+.card{display:grid;grid-template-columns:130px 1fr;gap:14px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px}
 .card svg{width:130px;height:130px;display:block}
 .card input{width:100%;padding:9px;border:1px solid #ccd;border-radius:8px;font-size:15px;font-weight:600}
 .link{font-size:12px;color:#445;word-break:break-all;margin:8px 0}
-.mini{padding:7px 12px;font-size:12px}
-.hint{font-size:12px;color:#667;margin-top:10px}
+.mini{padding:7px 12px;font-size:12px}.hint{font-size:12px;color:var(--ink2);margin-top:10px}
 #qrsheet{display:none}
 @media(min-width:700px){.act{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.row{grid-template-columns:110px 1fr 60px}}
+@media(max-width:640px){.pie{grid-template-columns:1fr;justify-items:center}.pie svg{width:200px;height:200px}.lg{width:100%}.row{grid-template-columns:120px 1fr 66px}}
 @media print{
-  body{background:#fff}.btns,#gate,.noprint{display:none!important}section,.k{break-inside:avoid;border-color:#ccc}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.btns,#gate,.noprint,.tabs,#tip{display:none!important}
+  section,.k{break-inside:avoid;border-color:#ccc}.scroll{max-height:none;overflow:visible}
   @page{size:landscape}
   body.printqr .wrap>*:not(#qrsheet){display:none!important}
   body.printqr #qrsheet{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-  body.printqr{ -webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .qc{border:3px solid #1c4069;border-radius:16px;padding:20px;text-align:center;break-inside:avoid}
-  .qc svg{width:280px;height:280px}.qc h3{margin:10px 0 2px;font-size:28px;color:#1c4069}.qc p{margin:0;font-size:15px}
+  .qc{border:3px solid var(--navy);border-radius:16px;padding:20px;text-align:center;break-inside:avoid}
+  .qc svg{width:280px;height:280px}.qc h3{margin:10px 0 2px;font-size:28px;color:var(--navy)}.qc p{margin:0;font-size:15px}
 }
 </style></head><body>
 <div id="gate"><h1>Informe</h1><input id="key" type="password" placeholder="Clave de acceso"><button onclick="load()">Entrar</button><div id="e" class="err"></div></div>
+<div id="tip"></div>
 <div class="wrap" id="app" hidden>
 <header><div><h1>Informe de activación UTPL</h1><div class="meta" id="meta"></div></div>
 <div class="btns"><a class="btn" id="csv">CSV</a><button onclick="print()">Descargar PDF</button></div></header>
 <div class="kpis" id="kpis"></div>
 
-<section><h2>Registros por modalidad</h2><div id="mods"></div></section>
-<section><h2>Registros por carrera o programa</h2><div id="bars"></div></section>
+<div class="zone">Estudiantes<small>Interés por modalidad, carrera o programa, y base de contactos</small></div>
+<section><h2>Registros por modalidad</h2><div id="pieMod"></div></section>
+<section><h2>Carreras y programas elegidos</h2>
+<div class="tabs noprint" id="tabs"></div>
+<div id="pieCar"></div>
+<h2 style="margin-top:18px" id="detT">Detalle completo</h2><div class="scroll" id="det"></div></section>
 <section><h2>Registros por hora (hora Ecuador)</h2><div id="hours"></div></section>
-<section><h2>Listado de contactos</h2><table><thead><tr><th>#</th><th>Fecha</th><th>Activadora</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th></tr></thead><tbody id="tb"></tbody></table></section>
+<section><h2>Listado de contactos</h2><div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Fecha</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th><th>Activadora</th></tr></thead><tbody id="tb"></tbody></table></div></section>
+
+<div class="zone">Activadoras<small>Solo cantidad de registros por cada una</small></div>
 <section><h2>Registros por activadora</h2><div id="byAct"></div></section>
-<section><h2>Registros por hora y activadora (hora Ecuador)</h2><div id="hourAct"></div></section>
-<section><h2>Modalidad de interés por activadora</h2><div id="modAct"></div></section>
-<section class="noprint"><h2>Activadoras y links</h2>
+<section class="noprint"><h2>Links y QR de las activadoras</h2>
 <div class="act" id="act"></div>
 <div class="btns" style="margin-top:14px"><button onclick="saveNames()">Guardar nombres</button><button class="alt" onclick="printQR()">Imprimir los 4 QR</button><span id="saved" class="meta" style="align-self:center"></span></div>
 <div class="hint">Puedes cambiar los nombres cuando quieras: los links y los QR no cambian, por lo que los ya impresos siguen funcionando. Si cambias un nombre durante el evento, el informe mostrará el nombre nuevo también para los registros anteriores de esa activadora.</div></section>
@@ -64,15 +89,77 @@ td.n,th.n{text-align:right}
 <script>
 const $=id=>document.getElementById(id);
 const tz={timeZone:'America/Guayaquil'};
-let KEY='',ACTS=[];
+const MODS=['Grado presencial','Grado en línea','Tecnología','Posgrado','Formación permanente'];
+const COL=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)'];
+const SVGNS='http://www.w3.org/2000/svg';
+let KEY='',ACTS=[],DATA=[],TAB='Todas';
 function el(t,txt,cls){const e=document.createElement(t);if(txt!==undefined)e.textContent=txt;if(cls)e.className=cls;return e}
-function bars(box,entries,total){box.replaceChildren();if(!entries.length){box.append(el('div','Sin registros todavía.','meta'));return}
+function sv(t,attrs){const e=document.createElementNS(SVGNS,t);for(const k in attrs)e.setAttribute(k,attrs[k]);return e}
+const pct=(v,t)=>t?Math.round(v/t*100)+'%':'0%';
+
+/* tooltip */
+const tip=$('tip');
+function showTip(e,html){tip.textContent=html;tip.style.display='block';const x=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8),y=Math.min(e.clientY+14,innerHeight-tip.offsetHeight-8);tip.style.left=Math.max(4,x)+'px';tip.style.top=Math.max(4,y)+'px'}
+function hideTip(){tip.style.display='none'}
+
+/* simple bars */
+function bars(box,entries,total){box.replaceChildren();if(!entries.length){box.append(el('div','Sin registros todavía.','empty'));return}
   const mx=Math.max(1,...entries.map(e=>e[1]));
-  entries.forEach(([k,v])=>{const r=el('div',undefined,'row');r.append(el('span',k));const b=el('div',undefined,'bar'),i=el('i');i.style.width=(v/mx*100)+'%';b.append(i);r.append(b,el('em',total?v+' · '+Math.round(v/total*100)+'%':v));box.append(r)})}
-function matrix(box,rowKeys,colKeys,get,rowLabel){box.replaceChildren();
-  if(!rowKeys.length){box.append(el('div','Sin registros todavía.','meta'));return}
-  const t=el('table'),hd=el('tr');hd.append(el('th',rowLabel));colKeys.forEach(c=>hd.append(el('th',c,'n')));hd.append(el('th','Total','n'));t.append(hd);
-  rowKeys.forEach(r=>{const tr=el('tr');tr.append(el('td',r));let s=0;colKeys.forEach(c=>{const v=get(r,c);s+=v;tr.append(el('td',v||'',' n'.trim()))});tr.append(el('td',s,'n'));t.append(tr)});box.append(t)}
+  entries.forEach(([k,v])=>{const r=el('div',undefined,'row'),s=el('span',k);s.title=k;r.append(s);const b=el('div',undefined,'bar'),i=el('i');i.style.width=(v/mx*100)+'%';b.append(i);r.append(b,el('em',total?v+' · '+pct(v,total):v));box.append(r)})}
+
+/* donut: items [{name,value,color}] */
+function donut(box,items,centerNum,centerLbl){
+  box.replaceChildren();
+  const total=items.reduce((s,i)=>s+i.value,0);
+  if(!total){box.append(el('div','Sin registros todavía.','empty'));return}
+  const wrap=el('div',undefined,'pie');wrap.setAttribute('role','img');
+  wrap.setAttribute('aria-label',items.map(i=>i.name+': '+i.value+' ('+pct(i.value,total)+')').join('; '));
+  const svg=sv('svg',{viewBox:'0 0 200 200'}),R=92,r=56,cx=100,cy=100;
+  const shapes=[],rows=[];
+  const hl=(idx,on)=>{wrap.classList.toggle('hl',on);shapes.forEach((s,i)=>s.classList.toggle('on',on&&i===idx));rows.forEach((s,i)=>s.classList.toggle('on',on&&i===idx))};
+  let a0=-Math.PI/2;
+  items.forEach((it,idx)=>{
+    let s;
+    if(items.length===1){s=sv('circle',{cx,cy,r:(R+r)/2,fill:'none','stroke-width':R-r,class:'s'});s.style.stroke=it.color;s.setAttribute('stroke-width',R-r)}
+    else{const a1=a0+it.value/total*2*Math.PI,lg=a1-a0>Math.PI?1:0,P=(rad,a)=>[cx+rad*Math.cos(a),cy+rad*Math.sin(a)];
+      const [x0,y0]=P(R,a0),[x1,y1]=P(R,a1),[x2,y2]=P(r,a1),[x3,y3]=P(r,a0);
+      s=sv('path',{d:`M${x0} ${y0}A${R} ${R} 0 ${lg} 1 ${x1} ${y1}L${x2} ${y2}A${r} ${r} 0 ${lg} 0 ${x3} ${y3}Z`});s.style.fill=it.color;a0=a1}
+    const msg=it.name+': '+it.value+' ('+pct(it.value,total)+')';
+    s.addEventListener('pointerenter',e=>{hl(idx,true);showTip(e,msg)});
+    s.addEventListener('pointermove',e=>showTip(e,msg));
+    s.addEventListener('pointerleave',()=>{hl(idx,false);hideTip()});
+    svg.append(s);shapes.push(s)});
+  const t1=sv('text',{x:cx,y:cy+4,'font-size':'30','font-weight':'800'});t1.textContent=centerNum;
+  const t2=sv('text',{x:cx,y:cy+24,'font-size':'11'});t2.style.fill='#52606f';t2.textContent=centerLbl;
+  svg.append(t1,t2);
+  const lg=el('div',undefined,'lg');
+  items.forEach((it,idx)=>{const row=el('div',undefined,'lr'),sw=el('i');sw.style.background=it.color;
+    const nm=el('span',it.name),n=el('b',String(it.value));n.append(el('small',pct(it.value,total)));
+    row.append(sw,nm,n);row.addEventListener('pointerenter',()=>hl(idx,true));row.addEventListener('pointerleave',()=>hl(idx,false));lg.append(row);rows.push(row)});
+  wrap.append(svg,lg);box.append(wrap)}
+
+/* modality pie (fixed color per modality) */
+function renderMod(){
+  const c={};DATA.forEach(x=>c[x.modalidad]=(c[x.modalidad]||0)+1);
+  const items=MODS.map((m,i)=>({name:m,value:c[m]||0,color:COL[i]})).filter(i=>i.value>0).sort((a,b)=>b.value-a.value);
+  donut($('pieMod'),items,DATA.length,'registros')}
+
+/* careers pie + full detail, by selected modality */
+function renderCar(){
+  const rows=TAB==='Todas'?DATA:DATA.filter(x=>x.modalidad===TAB);
+  const c={};rows.forEach(x=>c[x.carrera]=(c[x.carrera]||0)+1);
+  const all=Object.entries(c).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+  const top=all.slice(0,5),rest=all.slice(5);
+  const items=top.map(([n,v],i)=>({name:n,value:v,color:COL[i]}));
+  if(rest.length)items.push({name:'Otras ('+rest.length+')',value:rest.reduce((s,e)=>s+e[1],0),color:'var(--cx)'});
+  donut($('pieCar'),items,rows.length,TAB==='Todas'?'registros':'en '+TAB.toLowerCase());
+  $('detT').textContent='Detalle completo · '+all.length+(all.length===1?' carrera o programa':' carreras o programas');
+  bars($('det'),all,rows.length)}
+function renderTabs(){const t=$('tabs');t.replaceChildren();
+  ['Todas'].concat(MODS).forEach(m=>{const n=m==='Todas'?DATA.length:DATA.filter(x=>x.modalidad===m).length;
+    const b=el('button',m+' ('+n+')');b.setAttribute('aria-pressed',String(m===TAB));b.onclick=()=>{TAB=m;renderTabs();renderCar()};t.append(b)})}
+
+/* QR / activadoras */
 function qrFor(url){const q=qrcode(0,'M');q.addData(url);q.make();return q}
 function qrSvg(url){return qrFor(url).createSvgTag({cellSize:4,margin:2,scalable:true})}
 function qrPng(url,name){const q=qrFor(url),n=q.getModuleCount(),m=2,s=12,size=(n+2*m)*s,c=document.createElement('canvas');c.width=c.height=size;
@@ -96,31 +183,26 @@ async function saveNames(){
 function printQR(){const s=$('qrsheet');s.replaceChildren();
   ACTS.forEach(a=>{const c=el('div',undefined,'qc'),q=el('div');q.innerHTML=qrSvg(linkOf(a));c.append(q,el('h3',a.nombre),el('p','Escanea para registrarte'));s.append(c)});
   document.body.classList.add('printqr');window.onafterprint=()=>document.body.classList.remove('printqr');print()}
+
 async function load(keep){
   const key=keep?KEY:$('key').value;
   const r=await fetch('/api/informe',{headers:{'x-admin-key':key}});
   if(!r.ok){$('e').textContent='Clave incorrecta.';return}
-  KEY=key;const j=await r.json(),d=j.registros;ACTS=j.activadoras;
+  KEY=key;const j=await r.json();DATA=j.registros;ACTS=j.activadoras;const d=DATA;
   $('gate').hidden=true;$('app').hidden=false;
   $('csv').href='/api/informe.csv?key='+encodeURIComponent(key);
   $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz);
   const nameOf=id=>(ACTS.find(a=>a.id===id)||{}).nombre||'Sin asignar';
   const hourOf=x=>new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';
-  const byC={},byM={},byA={};
-  d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;byM[x.modalidad]=(byM[x.modalidad]||0)+1;const n=nameOf(x.activadora);byA[n]=(byA[n]||0)+1});
-  const sc=Object.entries(byC).sort((a,b)=>b[1]-a[1]),sa=Object.entries(byA).sort((a,b)=>b[1]-a[1]);
-  const sm=Object.entries(byM).sort((a,b)=>b[1]-a[1]);
+  const byC={},byM={},byA={},byH={};
+  d.forEach(x=>{byC[x.carrera]=(byC[x.carrera]||0)+1;byM[x.modalidad]=(byM[x.modalidad]||0)+1;const n=nameOf(x.activadora);byA[n]=(byA[n]||0)+1;const h=hourOf(x);byH[h]=(byH[h]||0)+1});
+  const sc=Object.entries(byC).sort((a,b)=>b[1]-a[1]),sm=Object.entries(byM).sort((a,b)=>b[1]-a[1]),sa=Object.entries(byA).sort((a,b)=>b[1]-a[1]);
   $('kpis').replaceChildren(...[['Total registros',d.length],['Carrera líder',sc[0]?sc[0][0]+' ('+sc[0][1]+')':'—'],['Carreras / programas con registros',sc.length],['Modalidad líder',sm[0]?sm[0][0]+' ('+sm[0][1]+')':'—'],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
-  if(!keep||!document.querySelector('#act input'))renderAct();
-  const actNames=ACTS.map(a=>a.nombre).concat(d.some(x=>!ACTS.some(a=>a.id===x.activadora))?['Sin asignar']:[]);
+  renderMod();renderTabs();renderCar();
+  bars($('hours'),Object.entries(byH).sort(),d.length);
+  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',tz),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera,nameOf(x.activadora)].forEach(v=>tr.append(el('td',v)));return tr}));
   bars($('byAct'),sa,d.length);
-  const byH={};d.forEach(x=>{const k=hourOf(x);byH[k]=(byH[k]||0)+1});bars($('hours'),Object.entries(byH).sort(),d.length);
-  const hours=[...new Set(d.map(hourOf))].sort();
-  matrix($('hourAct'),hours,actNames,(h,a)=>d.filter(x=>hourOf(x)===h&&nameOf(x.activadora)===a).length,'Hora');
-  const mods=Object.keys(byM).sort();
-  matrix($('modAct'),actNames.filter(a=>byA[a]),mods,(a,m)=>d.filter(x=>nameOf(x.activadora)===a&&x.modalidad===m).length,'Activadora');
-  bars($('mods'),Object.entries(byM).sort((a,b)=>b[1]-a[1]),d.length);bars($('bars'),sc);
-  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',tz),nameOf(x.activadora),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera].forEach(v=>tr.append(el('td',v)));return tr}));
+  if(!keep||!document.querySelector('#act input'))renderAct();
 }
 $('key').addEventListener('keydown',e=>e.key==='Enter'&&load());
 </script></body></html>
