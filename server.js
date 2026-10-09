@@ -34,12 +34,12 @@ let registros = [];
 try { registros = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8')); } catch (_) {}
 const save = () => fs.writeFileSync(DATA_FILE, JSON.stringify(registros, null, 2));
 
-const hits = new Map(); // rate limit: 10 envíos / 10 min / IP
+const hits = new Map(); // anti-abuso: 400 envíos / 10 min / IP (el WiFi del evento comparte una sola IP)
 function limited(ip) {
   const now = Date.now();
   const arr = (hits.get(ip) || []).filter(t => now - t < 600000);
   arr.push(now); hits.set(ip, arr);
-  return arr.length > 10;
+  return arr.length > 400;
 }
 
 const send = (res, code, body, type = 'application/json') => {
