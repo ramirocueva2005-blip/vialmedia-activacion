@@ -96,6 +96,22 @@ http.createServer((req, res) => {
     }
     return send(res, 200, { registros, activadoras });
   }
+  if (req.method === 'POST' && url.pathname === '/api/eliminar') {
+    if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
+    let raw = '';
+    req.on('data', c => { raw += c; if (raw.length > 50000) req.destroy(); });
+    req.on('end', () => {
+      let d; try { d = JSON.parse(raw); } catch { return send(res, 400, { error: 'Solicitud inválida.' }); }
+      const antes = registros.length;
+      try { fs.writeFileSync(DATA_FILE + '.bak', JSON.stringify(registros)); } catch (_) {}
+      if (d.todos === true) registros = [];
+      else if (Array.isArray(d.ids) && d.ids.length) { const set = new Set(d.ids.map(Number)); registros = registros.filter(r => !set.has(r.id)); }
+      else return send(res, 400, { error: 'Nada que eliminar.' });
+      save();
+      send(res, 200, { eliminados: antes - registros.length, quedan: registros.length });
+    });
+    return;
+  }
   if (req.method === 'PUT' && url.pathname === '/api/activadoras') {
     if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
     let raw = '';
