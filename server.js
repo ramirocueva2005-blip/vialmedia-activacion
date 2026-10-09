@@ -111,6 +111,7 @@ http.createServer((req, res) => {
       else if (Array.isArray(d.ids) && d.ids.length) { const set = new Set(d.ids.map(Number)); registros = registros.filter(r => !set.has(r.id)); }
       else return send(res, 400, { error: 'Nada que eliminar.' });
       save();
+      if (d.todos === true) { try { fs.unlinkSync(DATA_FILE + '.bak'); } catch (_) {} }
       send(res, 200, { eliminados: antes - registros.length, quedan: registros.length });
     });
     return;
