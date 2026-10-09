@@ -14,17 +14,17 @@ button,a.btn{padding:10px 16px;border-radius:8px;border:0;background:var(--navy)
 button.alt{background:#fff;color:var(--navy);border:1px solid var(--navy)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}
 .k{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--line)}
-.k b{display:block;font-size:22px;line-height:1.2}.k:first-child b{font-size:34px}.k span{font-size:12px;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.k b{display:block;font-size:20px;line-height:1.2;overflow-wrap:break-word;hyphens:auto}.k:first-child b{font-size:34px}.k span{font-size:12px;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
 .zone{background:var(--navy);color:#fff;border-radius:10px;padding:12px 16px;margin:30px 0 14px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:14px;break-after:avoid}
 .zone small{display:block;font-weight:500;text-transform:none;letter-spacing:0;opacity:.85;margin-top:2px}
 section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;overflow-x:auto}
 h2{font-size:15px;margin:0 0 12px}
-.row{display:grid;grid-template-columns:230px 1fr 78px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
-.row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row{display:grid;grid-template-columns:minmax(150px,320px) 1fr 78px;gap:10px;align-items:center;font-size:13px;margin:6px 0}
+.row span{line-height:1.25}
 .bar{background:#e9ecef;border-radius:4px;height:14px}.bar i{display:block;height:100%;background:var(--navy);border-radius:0 4px 4px 0}
 .row em{font-style:normal;text-align:right;font-weight:700}
 .scroll{max-height:340px;overflow:auto;padding-right:6px}
-table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef;white-space:nowrap}th{font-size:11px;text-transform:uppercase;color:var(--ink2)}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #e9ecef;vertical-align:top;overflow-wrap:anywhere}td.nw,th.nw{white-space:nowrap;overflow-wrap:normal}th{font-size:11px;text-transform:uppercase;color:var(--ink2)}
 #gate{max-width:360px;margin:20vh auto;text-align:center}#gate input{width:100%;padding:12px;font-size:16px;border:1px solid #ccd;border-radius:8px;margin:12px 0}
 .err{color:#c00;font-size:13px}.empty{color:var(--ink2);font-size:13px}
 /* pie */
@@ -53,8 +53,8 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;p
 @media(max-width:640px){.pie{grid-template-columns:1fr;justify-items:center}.pie svg{width:200px;height:200px}.lg{width:100%}.row{grid-template-columns:120px 1fr 66px}}
 @media print{
   body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.btns,#gate,.noprint,.tabs,#tip{display:none!important}
-  section,.k{break-inside:avoid;border-color:#ccc}.scroll{max-height:none;overflow:visible}
-  @page{size:landscape}
+  .k b{font-size:17px}section,.k{break-inside:avoid;border-color:#ccc}section.split{break-inside:auto}.pie{break-inside:avoid}h2,.zone{break-after:avoid}.zone{break-inside:avoid;margin:16px 0 10px}#zAct{break-before:page;margin-top:0}tr{break-inside:avoid}thead{display:table-header-group}.scroll{max-height:none;overflow:visible}table{font-size:11px}.row{margin:4px 0;font-size:12px}
+  @page{size:landscape;margin:9mm}
   body.printqr .wrap>*:not(#qrsheet){display:none!important}
   body.printqr #qrsheet{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   .qc{border:3px solid var(--navy);border-radius:16px;padding:20px;text-align:center;break-inside:avoid}
@@ -70,14 +70,14 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;p
 
 <div class="zone">Estudiantes<small>Interés por modalidad, carrera o programa, y base de contactos</small></div>
 <section><h2>Registros por modalidad</h2><div id="pieMod"></div></section>
-<section><h2>Carreras y programas elegidos</h2>
+<section class="split"><h2>Carreras y programas elegidos</h2>
 <div class="tabs noprint" id="tabs"></div>
 <div id="pieCar"></div>
 <h2 style="margin-top:18px" id="detT">Detalle completo</h2><div class="scroll" id="det"></div></section>
 <section><h2>Registros por hora (hora Ecuador)</h2><div id="hours"></div></section>
-<section><h2>Listado de contactos</h2><div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Fecha</th><th>Nombre</th><th>Cédula</th><th>Correo</th><th>Teléfono</th><th>Modalidad</th><th>Carrera / programa</th><th>Activadora</th></tr></thead><tbody id="tb"></tbody></table></div></section>
+<section class="split"><h2>Listado de contactos</h2><div style="overflow-x:auto"><table><thead><tr><th class="nw">#</th><th class="nw">Fecha</th><th>Nombre</th><th class="nw">Cédula</th><th>Correo</th><th class="nw">Teléfono</th><th>Modalidad</th><th>Carrera / programa</th><th class="nw">Activadora</th></tr></thead><tbody id="tb"></tbody></table></div></section>
 
-<div class="zone">Activadoras<small>Solo cantidad de registros por cada una</small></div>
+<div class="zone" id="zAct">Activadoras<small>Solo cantidad de registros por cada una</small></div>
 <section><h2>Registros por activadora</h2><div id="byAct"></div></section>
 <section class="noprint"><h2>Links y QR de las activadoras</h2>
 <div class="act" id="act"></div>
@@ -200,7 +200,7 @@ async function load(keep){
   $('kpis').replaceChildren(...[['Total registros',d.length],['Carrera líder',sc[0]?sc[0][0]+' ('+sc[0][1]+')':'—'],['Carreras / programas con registros',sc.length],['Modalidad líder',sm[0]?sm[0][0]+' ('+sm[0][1]+')':'—'],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
   renderMod();renderTabs();renderCar();
   bars($('hours'),Object.entries(byH).sort(),d.length);
-  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',tz),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera,nameOf(x.activadora)].forEach(v=>tr.append(el('td',v)));return tr}));
+  $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');[x.id,new Date(x.fecha).toLocaleString('es-EC',{...tz,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera,nameOf(x.activadora)].forEach((v,i)=>tr.append(el('td',v,[0,1,3,5].includes(i)?'nw':'')));return tr}));
   bars($('byAct'),sa,d.length);
   if(!keep||!document.querySelector('#act input'))renderAct();
 }
