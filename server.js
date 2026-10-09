@@ -90,11 +90,14 @@ http.createServer((req, res) => {
 
   if (url.pathname === '/api/informe') {
     if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
-    if (url.searchParams.get('demo') === '1') {
-      let d = []; try { d = JSON.parse(fs.readFileSync(path.join(__dirname, 'demo.json'), 'utf8')); } catch {}
-      return send(res, 200, { registros: d, activadoras, demo: true });
-    }
     return send(res, 200, { registros, activadoras });
+  }
+  if (req.method === 'POST' && url.pathname === '/api/cargar-ejemplo') {
+    if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
+    if (registros.length) return send(res, 409, { error: 'Solo se puede cargar con el panel vacío.' });
+    try { registros = JSON.parse(fs.readFileSync(path.join(__dirname, 'demo.json'), 'utf8')); } catch { return send(res, 500, { error: 'Sin datos de ejemplo.' }); }
+    save();
+    return send(res, 200, { cargados: registros.length });
   }
   if (req.method === 'POST' && url.pathname === '/api/eliminar') {
     if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });

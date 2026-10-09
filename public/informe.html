@@ -75,7 +75,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;p
 <div id="pieCar"></div>
 <h2 style="margin-top:18px" id="detT">Detalle completo</h2><div class="scroll" id="det"></div></section>
 <section><h2>Registros por hora (hora Ecuador)</h2><div id="hours"></div></section>
-<section class="split"><h2>Listado de contactos</h2><div class="noprint" id="del" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 8px"><button id="delSel" disabled>Eliminar seleccionados (0)</button><button id="delAll" style="background:#b3261e;color:#fff">Eliminar todos</button><span style="font-size:12px;color:#666">Acción permanente.</span></div><div style="overflow-x:auto"><table><thead><tr><th class="noprint"><input type="checkbox" id="selAll" aria-label="Seleccionar todos"></th><th class="nw">#</th><th class="nw">Fecha</th><th>Nombre</th><th class="nw">Cédula</th><th>Correo</th><th class="nw">Teléfono</th><th>Modalidad</th><th>Carrera / programa</th><th class="nw">Activadora</th></tr></thead><tbody id="tb"></tbody></table></div></section>
+<section class="split"><h2>Listado de contactos</h2><div class="noprint" id="del" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 8px"><button id="delSel" disabled>Eliminar seleccionados (0)</button><button id="delAll" style="background:#b3261e;color:#fff">Eliminar todos</button><button id="seed" hidden>Cargar 50 registros de ejemplo</button><span style="font-size:12px;color:#666">Acción permanente.</span></div><div style="overflow-x:auto"><table><thead><tr><th class="noprint"><input type="checkbox" id="selAll" aria-label="Seleccionar todos"></th><th class="nw">#</th><th class="nw">Fecha</th><th>Nombre</th><th class="nw">Cédula</th><th>Correo</th><th class="nw">Teléfono</th><th>Modalidad</th><th>Carrera / programa</th><th class="nw">Activadora</th></tr></thead><tbody id="tb"></tbody></table></div></section>
 
 <div class="zone" id="zAct">Activadoras<small>Solo cantidad de registros por cada una</small></div>
 <section><h2>Registros por activadora</h2><div id="byAct"></div></section>
@@ -184,24 +184,23 @@ function printQR(){const s=$('qrsheet');s.replaceChildren();
   ACTS.forEach(a=>{const c=el('div',undefined,'qc'),q=el('div');q.innerHTML=qrSvg(linkOf(a));c.append(q,el('h3',a.nombre),el('p','Escanea para registrarte'));s.append(c)});
   document.body.classList.add('printqr');window.onafterprint=()=>document.body.classList.remove('printqr');print()}
 
-const DEMO=new URLSearchParams(location.search).get('demo')==='1';
 function updSel(){const n=document.querySelectorAll('.rc:checked').length;$('delSel').disabled=!n;$('delSel').textContent='Eliminar seleccionados ('+n+')'}
 async function eliminar(body){
   const r=await fetch('/api/eliminar',{method:'POST',headers:{'x-admin-key':KEY,'content-type':'application/json'},body:JSON.stringify(body)});
   if(!r.ok){alert('No se pudo eliminar.');return}
   const j=await r.json();alert('Eliminados: '+j.eliminados+'. Quedan: '+j.quedan+'.');load(true)}
+$('seed').onclick=async()=>{if(!confirm('Se cargarán 50 registros FICTICIOS para demostración. Luego bórralos con "Eliminar todos". ¿Continuar?'))return;const r=await fetch('/api/cargar-ejemplo',{method:'POST',headers:{'x-admin-key':KEY}});if(!r.ok){alert('No se pudo cargar.');return}load(true)};
 $('selAll').onchange=e=>{document.querySelectorAll('.rc').forEach(c=>c.checked=e.target.checked);updSel()};
 $('delSel').onclick=()=>{const ids=[...document.querySelectorAll('.rc:checked')].map(c=>+c.value);if(ids.length&&confirm('¿Eliminar '+ids.length+' registro(s) de forma permanente?'))eliminar({ids})};
-$('delAll').onclick=()=>{if(DEMO)return;const n=DATA.length;if(!n){alert('No hay registros.');return}if(prompt('Se eliminarán los '+n+' registros de forma permanente.\nEscribe ELIMINAR para confirmar:')==='ELIMINAR')eliminar({todos:true})};
+$('delAll').onclick=()=>{const n=DATA.length;if(!n){alert('No hay registros.');return}if(prompt('Se eliminarán los '+n+' registros de forma permanente.\nEscribe ELIMINAR para confirmar:')==='ELIMINAR')eliminar({todos:true})};
 
 async function load(keep){
   const key=keep?KEY:$('key').value;
-  const r=await fetch('/api/informe'+(DEMO?'?demo=1':''),{headers:{'x-admin-key':key}});
+  const r=await fetch('/api/informe',{headers:{'x-admin-key':key}});
   if(!r.ok){$('e').textContent='Clave incorrecta.';return}
   KEY=key;const j=await r.json();DATA=j.registros;ACTS=j.activadoras;const d=DATA;
   $('gate').hidden=true;$('app').hidden=false;
   $('csv').href='/api/informe.csv?key='+encodeURIComponent(key);
-  if(DEMO){document.title='DEMO · '+document.title;$('meta').insertAdjacentHTML('beforebegin','<div style="background:#f2c142;color:#1c4069;font-weight:700;padding:6px 10px;border-radius:6px;margin:6px 0">VISTA DE DEMOSTRACIÓN · datos ficticios, no son registros reales</div>');$('csv').hidden=true;$('del').hidden=true}
   $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz);
   const nameOf=id=>(ACTS.find(a=>a.id===id)||{}).nombre||'Sin asignar';
   const hourOf=x=>new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';
@@ -211,7 +210,7 @@ async function load(keep){
   $('kpis').replaceChildren(...[['Total registros',d.length],['Carrera líder',sc[0]?sc[0][0]+' ('+sc[0][1]+')':'—'],['Carreras / programas con registros',sc.length],['Modalidad líder',sm[0]?sm[0][0]+' ('+sm[0][1]+')':'—'],['Con autorización',d.length]].map(([l,v])=>{const k=el('div',undefined,'k');k.append(el('b',v),el('span',l));return k}));
   renderMod();renderTabs();renderCar();
   bars($('hours'),Object.entries(byH).sort(),d.length);
-  $('selAll').checked=false;updSel();
+  $('selAll').checked=false;updSel();$('seed').hidden=!!d.length;
   $('tb').replaceChildren(...d.map(x=>{const tr=el('tr');const td0=el('td','','noprint');const cb=document.createElement('input');cb.type='checkbox';cb.className='rc';cb.value=x.id;cb.onchange=updSel;td0.append(cb);tr.append(td0);[x.id,new Date(x.fecha).toLocaleString('es-EC',{...tz,day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}),x.nombre,x.cedula,x.correo,x.telefono,x.modalidad,x.carrera,nameOf(x.activadora)].forEach((v,i)=>tr.append(el('td',v,[0,1,3,5].includes(i)?'nw':'')));return tr}));
   bars($('byAct'),sa,d.length);
   if(!keep||!document.querySelector('#act input'))renderAct();
