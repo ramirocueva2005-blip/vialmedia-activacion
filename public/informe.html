@@ -184,13 +184,15 @@ function printQR(){const s=$('qrsheet');s.replaceChildren();
   ACTS.forEach(a=>{const c=el('div',undefined,'qc'),q=el('div');q.innerHTML=qrSvg(linkOf(a));c.append(q,el('h3',a.nombre),el('p','Escanea para registrarte'));s.append(c)});
   document.body.classList.add('printqr');window.onafterprint=()=>document.body.classList.remove('printqr');print()}
 
+const DEMO=new URLSearchParams(location.search).get('demo')==='1';
 async function load(keep){
   const key=keep?KEY:$('key').value;
-  const r=await fetch('/api/informe',{headers:{'x-admin-key':key}});
+  const r=await fetch('/api/informe'+(DEMO?'?demo=1':''),{headers:{'x-admin-key':key}});
   if(!r.ok){$('e').textContent='Clave incorrecta.';return}
   KEY=key;const j=await r.json();DATA=j.registros;ACTS=j.activadoras;const d=DATA;
   $('gate').hidden=true;$('app').hidden=false;
   $('csv').href='/api/informe.csv?key='+encodeURIComponent(key);
+  if(DEMO){document.title='DEMO · '+document.title;$('meta').insertAdjacentHTML('beforebegin','<div style="background:#f2c142;color:#1c4069;font-weight:700;padding:6px 10px;border-radius:6px;margin:6px 0">VISTA DE DEMOSTRACIÓN · datos ficticios, no son registros reales</div>');$('csv').hidden=true}
   $('meta').textContent='Generado: '+new Date().toLocaleString('es-EC',tz);
   const nameOf=id=>(ACTS.find(a=>a.id===id)||{}).nombre||'Sin asignar';
   const hourOf=x=>new Date(x.fecha).toLocaleString('es-EC',{...tz,hour:'2-digit',hour12:false})+':00';

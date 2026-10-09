@@ -90,6 +90,10 @@ http.createServer((req, res) => {
 
   if (url.pathname === '/api/informe') {
     if (!authed(req, url)) return send(res, 401, { error: 'No autorizado.' });
+    if (url.searchParams.get('demo') === '1') {
+      let d = []; try { d = JSON.parse(fs.readFileSync(path.join(__dirname, 'demo.json'), 'utf8')); } catch {}
+      return send(res, 200, { registros: d, activadoras, demo: true });
+    }
     return send(res, 200, { registros, activadoras });
   }
   if (req.method === 'PUT' && url.pathname === '/api/activadoras') {
